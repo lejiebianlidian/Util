@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Util.Properties;
 using Util.Ui.Angular.Base;
 using Util.Ui.Angular.Enums;
-using Util.Ui.Angular.Tables.Resolvers;
+using Util.Ui.Angular.Resolvers;
 using Util.Ui.Configs;
 using Util.Ui.Extensions;
 using Util.Ui.Renders;
@@ -55,6 +56,18 @@ namespace Util.Ui.Zorro.Tables {
         /// 7. 毫秒 - SSS
         /// </summary>
         public string DateFormat { get; set; }
+        /// <summary>
+        /// 是否排序
+        /// </summary>
+        public bool Sort { get; set; }
+        /// <summary>
+        /// 宽度，默认单位：px，范例：100，表示100px，也可以使用百分比，范例：10%
+        /// </summary>
+        public string Width { get; set; }
+        /// <summary>
+        /// 截断原始内容，并使用tooltip显示完整内容，设置截断后保留的长度,范例：原始内容为abcd,设置2，则显示 ab...
+        /// </summary>
+        public int Truncate { get; set; }
 
         /// <summary>
         /// 获取渲染器
@@ -91,27 +104,51 @@ namespace Util.Ui.Zorro.Tables {
         /// </summary>
         private void SetShareConfig() {
             var shareConfig = _config.Context.GetValueFromItems<TableShareConfig>( TableConfig.TableShareKey );
-            AddTitle( shareConfig );
-            AddCheckbox( shareConfig );
+            if( shareConfig == null )
+                return;
+            var type = _config.Context.GetValueFromAttributes<TableColumnType?>( UiConst.Type );
+            AddColumn( shareConfig, type );
         }
 
         /// <summary>
-        /// 添加标题配置
+        /// 添加列配置
         /// </summary>
-        private void AddTitle( TableShareConfig config ) {
-            if( _config.Context.GetValueFromAttributes<TableColumnType?>( UiConst.Type ) == TableColumnType.Checkbox )
-                return;
-            var title = _config.GetValue<string>( UiConst.Title );
-            config?.Titles.Add( title );
+        private void AddColumn( TableShareConfig config, TableColumnType? type ) {
+            var title = GetTitle( type );
+            var column = _config.GetValue( UiConst.Column );
+            var isSort = _config.GetValue<bool>( UiConst.Sort );
+            if( isSort )
+                config.IsSort = true;
+            config.Columns.Add( new ColumnInfo( title, column ) {
+                IsSort = isSort,
+                IsCheckbox = type == TableColumnType.Checkbox,
+                IsLineNumber = type == TableColumnType.LineNumber,
+                Width = GetWidth( type )
+            } );
         }
 
         /// <summary>
-        /// 添加复选框配置
+        /// 获取标题
         /// </summary>
-        private void AddCheckbox( TableShareConfig config ) {
-            if( _config.GetValue<TableColumnType?>( UiConst.Type ) != TableColumnType.Checkbox )
-                return;
-            config.AutoCreateHeadCheckbox = true;
+        private string GetTitle( TableColumnType? type ) {
+            var result = _config.GetValue( UiConst.Title );
+            if( result.IsEmpty() == false )
+                return result;
+            return type == TableColumnType.LineNumber ? R.LineNumber : null;
+        }
+
+        /// <summary>
+        /// 获取宽度
+        /// </summary>
+        private string GetWidth( TableColumnType? type ) {
+            var result = _config.GetValue( UiConst.Width );
+            if( result.IsEmpty() == false )
+                return result;
+            if( type == TableColumnType.LineNumber )
+                return TableConfig.LineNumberWidth;
+            if( type == TableColumnType.Checkbox )
+                return TableConfig.CheckboxWidth;
+            return null;
         }
     }
 }

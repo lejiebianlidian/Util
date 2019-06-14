@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Util.Properties;
 using Util.Ui.Angular.AntDesign.Tests.XUnitHelpers;
 using Util.Ui.Angular.Enums;
 using Util.Ui.Configs;
@@ -79,12 +80,57 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro.Tables {
             var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.Checkbox } };
             var items = new Dictionary<object, object> { { TableConfig.TableShareKey, new TableShareConfig( "id" ) } };
             var result = new String();
-            result.Append( "" );
-            result.Append( "<th (nzCheckedChange)=\"id_wrapper.masterToggle()\" nzShowCheckbox=\"\" " );
+            result.Append( "<th (nzCheckedChange)=\"id_wrapper.masterToggle()\" nzWidth=\"30px\" " );
             result.Append( "[nzChecked]=\"id_wrapper.isMasterChecked()\" " );
-            result.Append( "[nzDisabled]=\"!id_wrapper.dataSource.length\" [nzIndeterminate]=\"id_wrapper.isMasterIndeterminate()\">" );
+            result.Append( "[nzDisabled]=\"!id_wrapper.dataSource.length\" [nzIndeterminate]=\"id_wrapper.isMasterIndeterminate()\" " );
+            result.Append( "[nzShowCheckbox]=\"id_wrapper.multiple\">" );
+            result.Append( "{{id_wrapper.multiple?'':'单选'}}" );
             result.Append( "</th>" );
             Assert.Equal( result.ToString(), GetResult( attributes, items: items ) );
+        }
+
+        /// <summary>
+        /// 测试设置序号类型
+        /// </summary>
+        [Fact]
+        public void TestType_LineNumber() {
+            var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.LineNumber } };
+            var result = new String();
+            result.Append( $"<th nzWidth=\"70px\">{R.LineNumber}</th>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试排序
+        /// </summary>
+        [Fact]
+        public void TestSort() {
+            var attributes = new TagHelperAttributeList { { UiConst.Sort, "a" } };
+            var result = new String();
+            result.Append( "<th nzSortKey=\"a\" [nzShowSort]=\"true\"></th>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试宽度
+        /// </summary>
+        [Fact]
+        public void TestWidth() {
+            var attributes = new TagHelperAttributeList { { UiConst.Width, "a" } };
+            var result = new String();
+            result.Append( "<th nzWidth=\"a\"></th>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试宽度,如果是数值，添加px
+        /// </summary>
+        [Fact]
+        public void TestWidth_Number() {
+            var attributes = new TagHelperAttributeList { { UiConst.Width, "100" } };
+            var result = new String();
+            result.Append( "<th nzWidth=\"100px\"></th>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
         }
     }
 }

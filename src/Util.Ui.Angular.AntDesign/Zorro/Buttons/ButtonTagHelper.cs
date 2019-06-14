@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using Util.Ui.Angular.Base;
 using Util.Ui.Configs;
+using Util.Ui.Enums;
 using Util.Ui.Renders;
 using Util.Ui.TagHelpers;
 using Util.Ui.Zorro.Buttons.Renders;
-using Util.Ui.Zorro.Enums;
 
 namespace Util.Ui.Zorro.Buttons {
     /// <summary>
@@ -25,13 +25,17 @@ namespace Util.Ui.Zorro.Buttons {
         /// </summary>
         public Color Color { get; set; }
         /// <summary>
-        /// 是否提交按钮
+        /// 是否验证表单
         /// </summary>
-        public bool IsSubmit { get; set; }
+        public bool ValidateForm { get; set; }
         /// <summary>
         /// 禁用
         /// </summary>
         public string Disabled { get; set; }
+        /// <summary>
+        /// 图标
+        /// </summary>
+        public AntDesignIcon Icon { get; set; }
         /// <summary>
         /// 提示
         /// </summary>
@@ -66,7 +70,7 @@ namespace Util.Ui.Zorro.Buttons {
         /// </summary>
         /// <param name="context">上下文</param>
         protected override IRender GetRender( Context context ) {
-            return new ButtonWrapperRender( new Config( context ) );
+            return new ButtonRender( new Config( context ) );
         }
     }
 }

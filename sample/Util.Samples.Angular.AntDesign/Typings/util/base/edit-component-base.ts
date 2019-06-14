@@ -1,5 +1,5 @@
 ﻿//============== Crud编辑组件基类===============
-//Copyright 2018 何镇汐
+//Copyright 2019 何镇汐
 //Licensed under the MIT license
 //================================================
 import { Injector, OnInit } from '@angular/core';
@@ -32,7 +32,9 @@ export abstract class EditComponentBase<TViewModel extends ViewModel> extends Fo
     /**
      * 创建视图模型
      */
-    protected abstract createModel(): TViewModel;
+    protected createModel(): TViewModel {
+        return <TViewModel>{};
+    }
 
     /**
      * 初始化
@@ -50,10 +52,18 @@ export abstract class EditComponentBase<TViewModel extends ViewModel> extends Fo
             return;
         this.util.webapi.get<TViewModel>(this.getByIdUrl(id)).handle({
             ok: result => {
+                result = this.loadBefore( result );
                 this.model = result;
                 this.loadAfter(result);
             }
         });
+    }
+
+    /**
+     * 加载完成前操作
+     */
+    protected loadBefore( result ) {
+        return result;
     }
 
     /**

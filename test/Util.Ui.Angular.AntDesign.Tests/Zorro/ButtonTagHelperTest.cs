@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using Util.Ui.Angular.AntDesign.Tests.XUnitHelpers;
 using Util.Ui.Configs;
+using Util.Ui.Enums;
 using Util.Ui.Zorro.Buttons;
-using Util.Ui.Zorro.Enums;
 using Xunit;
 using Xunit.Abstractions;
 using String = Util.Helpers.String;
@@ -91,13 +91,13 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro {
         }
 
         /// <summary>
-        /// 测试是否提交按钮
+        /// 测试是否验证表单
         /// </summary>
         [Fact]
-        public void TestIsSubmit() {
-            var attributes = new TagHelperAttributeList { { AngularConst.IsSubmit, true } };
+        public void TestValidateForm() {
+            var attributes = new TagHelperAttributeList { { UiConst.ValidateForm, true } };
             var result = new String();
-            result.Append( "<x-button [isSubmit]=\"true\"></x-button>" );
+            result.Append( "<x-button [validateForm]=\"true\"></x-button>" );
             Assert.Equal( result.ToString(), GetResult( attributes ) );
         }
 
@@ -219,6 +219,21 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro {
             var attributes = new TagHelperAttributeList { { UiConst.Ghost, true } };
             var result = new String();
             result.Append( "<x-button [ghost]=\"true\"></x-button>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试设置图标
+        /// </summary>
+        [Fact]
+        public void TestIcon() {
+            var attributes = new TagHelperAttributeList { { UiConst.Icon, AntDesignIcon.Check } };
+            var result = new String();
+            result.Append( "<x-button>" );
+            result.Append( "<ng-template>" );
+            result.Append( "<i nz-icon=\"\" nzType=\"check\"></i>" );
+            result.Append( "</ng-template>" );
+            result.Append( "</x-button>" );
             Assert.Equal( result.ToString(), GetResult( attributes ) );
         }
     }

@@ -79,15 +79,19 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro.Tables {
             var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.Checkbox } };
             var items = new Dictionary<object, object> { { TableConfig.TableShareKey, new TableShareConfig( "id" ) } };
             var result = new String();
-            result.Append( "" );
-            result.Append( "<td (click)=\"$event.stopPropagation()\" (nzCheckedChange)=\"id_wrapper.checkedSelection.toggle(row)\" nzShowCheckbox=\"\" " );
-            result.Append( "[nzChecked]=\"id_wrapper.checkedSelection.isSelected(row)\">" );
+            result.Append( "<td (click)=\"$event.stopPropagation()\" (nzCheckedChange)=\"id_wrapper.checkedSelection.toggle(row)\" " );
+            result.Append( "[nzChecked]=\"id_wrapper.checkedSelection.isSelected(row)\" " );
+            result.Append( "[nzShowCheckbox]=\"id_wrapper.multiple\">" );
+            result.Append( "<label (click)=\"$event.stopPropagation()\" (ngModelChange)=\"id_wrapper.checkRowOnly(row)\" " );
+            result.Append( "*ngIf=\"!id_wrapper.multiple\" name=\"radio_id\" nz-radio=\"\" " );
+            result.Append( "[ngModel]=\"id_wrapper.checkedSelection.isSelected(row)\">" );
+            result.Append( "</label>" );
             result.Append( "</td>" );
              Assert.Equal( result.ToString(), GetResult( attributes, items: items ) );
         }
 
         /// <summary>
-        /// 测试列名称
+        /// 测试日期类型列
         /// </summary>
         [Fact]
         public void TestType_Date() {
@@ -98,13 +102,46 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro.Tables {
         }
 
         /// <summary>
-        /// 测试列名称
+        /// 测试日期类型列 - 自定义日期格式
         /// </summary>
         [Fact]
         public void TestType_Date_Format() {
             var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.Date }, { UiConst.DateFormat, "a" }, { UiConst.Column, "a" } };
             var result = new String();
             result.Append( "<td>{{ row.a | date:\"a\" }}</td>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试布尔类型列
+        /// </summary>
+        [Fact]
+        public void TestType_Bool() {
+            var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.Bool }, { UiConst.Column, "a" } };
+            var result = new String();
+            result.Append( "<td>{{row.a?'是':'否'}}</td>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试设置行号类型
+        /// </summary>
+        [Fact]
+        public void TestType_LineNumber() {
+            var attributes = new TagHelperAttributeList { { UiConst.Type, TableColumnType.LineNumber } };
+            var result = new String();
+            result.Append( "<td>{{row.lineNumber}}</td>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试截断
+        /// </summary>
+        [Fact]
+        public void TestTruncate() {
+            var attributes = new TagHelperAttributeList { { UiConst.Column, "a" },{ UiConst.Truncate, 3 } };
+            var result = new String();
+            result.Append( "<td nz-tooltip=\"\" [nzTitle]=\"(row.a|isTruncate:3)?row.a:''\">{{row.a|truncate:3}}</td>" );
             Assert.Equal( result.ToString(), GetResult( attributes ) );
         }
     }

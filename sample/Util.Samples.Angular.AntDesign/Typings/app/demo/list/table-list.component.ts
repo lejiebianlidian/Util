@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { TableQueryComponentBase } from '../../../util';
 import { env } from '../../env';
+import { ApplicationQuery } from './model/application-query';
+import { ApplicationViewModel } from './model/application-view-model';
 
 @Component({
     selector: 'app-table-list',
-    templateUrl: !env.dev() ? './html/basic-form.component.html' : '/View/Demo/List/TableList',
+    templateUrl: !env.dev() ? './html/table-list.component.html' : '/View/Demo/List/TableList',
 })
-export class TableListComponent implements OnInit {
-    model;
-
-    constructor() {
-        this.model = {};
-    }
-
-    ngOnInit() {
+export class TableListComponent extends TableQueryComponentBase<ApplicationViewModel, ApplicationQuery> {
+    expandForm;
+    status;
+    /**
+     * ³õÊ¼»¯
+     * @param injector ×¢ÈëÆ÷
+     */
+    constructor( injector: Injector ) {
+        super( injector );
     }
 }
