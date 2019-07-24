@@ -84,7 +84,7 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro.Forms {
         /// </summary>
         [Fact]
         public void TestModel() {
-            var attributes = new TagHelperAttributeList { { UiConst.Model, "a" } };
+            var attributes = new TagHelperAttributeList { { AngularConst.NgModel, "a" } };
             var result = new String();
             result.Append( "<nz-switch [(ngModel)]=\"a\"></nz-switch>" );
             Assert.Equal( result.ToString(), GetResult( attributes ) );
@@ -109,6 +109,19 @@ namespace Util.Ui.Angular.AntDesign.Tests.Zorro.Forms {
             var attributes = new TagHelperAttributeList { { AngularConst.BindDisabled, "a" } };
             var result = new String();
             result.Append( "<nz-switch [nzDisabled]=\"a\"></nz-switch>" );
+            Assert.Equal( result.ToString(), GetResult( attributes ) );
+        }
+
+        /// <summary>
+        /// 测试栅格跨度
+        /// </summary>
+        [Fact]
+        public void TestSpan() {
+            var attributes = new TagHelperAttributeList { { UiConst.Span, 2 } };
+            var result = new String();
+            result.Append( "<nz-form-control [nzSpan]=\"2\">" );
+            result.Append( "<nz-switch></nz-switch>" );
+            result.Append( "</nz-form-control>" );
             Assert.Equal( result.ToString(), GetResult( attributes ) );
         }
 
