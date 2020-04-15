@@ -18,7 +18,7 @@ export abstract class TableQueryComponentBase<TViewModel extends ViewModel, TQue
     /**
      * 表格组件
      */
-    @ViewChild( forwardRef( () => Table ) ) protected table: Table<TViewModel>;
+    @ViewChild( forwardRef( () => Table ), { "static": true } ) protected table: Table<TViewModel>;
 
     /**
      * 初始化组件
@@ -60,7 +60,8 @@ export abstract class TableQueryComponentBase<TViewModel extends ViewModel, TQue
      */
     query( button?) {
         this.table.query( {
-            button: button
+            button: button,
+            pageIndex: 1
         } );
     }
 

@@ -14,7 +14,8 @@ import { WebApi as webapi } from '../common/webapi';
     selector: 'x-radio',
     template:`
     <nz-form-control>
-        <nz-radio-group #controlModel="ngModel" [name]="name" [nzName]="name" [ngModel]="model" (ngModelChange)="onModelChange($event)" [nzDisabled]="disabled" [required]="required">
+        <nz-radio-group #controlModel="ngModel" [name]="name" [nzName]="name" [ngModel]="model" (ngModelChange)="onModelChange($event)" 
+            [nzDisabled]="disabled" [required]="required" [nzButtonStyle]="'solid'">
             <label nz-radio *ngFor="let item of dataSource" [nzValue]="item.value" [nzDisabled]="item.disabled" 
                    [ngStyle]="vertical?verticalStyle:''">
             {{ item.text }}
@@ -38,6 +39,10 @@ export class Radio implements OnInit, AfterViewInit {
      * 是否垂直布局
      */
     @Input() vertical: boolean;
+    /**
+     * 风格样式，可选值：'outline' | 'solid'
+     */
+    @Input() buttonStyle: string;
     /**
      * 是否显示标签
      */
@@ -77,13 +82,14 @@ export class Radio implements OnInit, AfterViewInit {
     /**
      * 控件模型
      */
-    @ViewChild('controlModel') controlModel: NgModel;
+    @ViewChild( 'controlModel', { "static": false }) controlModel: NgModel;
 
     /**
      * 初始化单选按钮包装器
      */
     constructor( @Optional() private form: NgForm) {
         this.showLabel = true;
+        this.buttonStyle = 'outline';
     }
 
     /**

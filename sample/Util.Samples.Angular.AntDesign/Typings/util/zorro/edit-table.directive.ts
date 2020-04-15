@@ -298,9 +298,17 @@ export class EditTableDirective {
          */
         url?: string,
         /**
+         * 确认消息,
+         */
+        confirm?:string,
+        /**
          * 创建保存参数
          */
         createData?: (data) => any,
+        /**
+         * 是否已修改
+         */
+        isDirty?: (data) => boolean,
         /**
          * 保存前操作，返回 false 阻止添加
          */
@@ -309,24 +317,24 @@ export class EditTableDirective {
          * 保存成功操作
          */
         ok?: (result) => void;
-    }) {
+    } ) {
         if (!options)
             return;
         if (!this.validate())
             return;
         let baseUrl = this.table.baseUrl;
-        let url = options.url || this.saveUrl || (baseUrl && `/api/${baseUrl}/save`);
+        let url = options.url || this.saveUrl || util.helper.getUrl( baseUrl, "save" );
         if (!url) {
             console.error("表格编辑提交url未设置");
-            return;
-        }
-        if (this.creationIds.length === 0 && this.updateIds.length === 0 && this.removeRows.length === 0) {
-            util.message.warn(config.noNeedSave);
             return;
         }
         let data = this.createSaveData(options.createData);
         if (!data)
             return;
+        if (!this.isDirty(data, options.isDirty)) {
+            util.message.warn(config.noNeedSave);
+            return;
+        }
         if (options.before && !options.before(data))
             return;
         this.processData(data);
@@ -335,13 +343,34 @@ export class EditTableDirective {
             url: url,
             data: data,
             button: options.button,
-            confirm: config.saveConfirm,
+            confirm: options.confirm,
             ok: result => {
                 this.clear();
-                options.ok && options.ok(result);
-                this.table.query();
+                options.ok && options.ok( result );
+                this.table.query( {
+                    handler: result => {
+                        if ( result.page > result.pageCount ) {
+                            this.table.query( {
+                                pageIndex: result.page - 1
+                            } );
+                        }
+                    }
+                } );
             }
         });
+    }
+
+    /**
+     * 是否已修改
+     */
+    private isDirty(data, handler: (data) => boolean) {
+        if (data.creationList && data.creationList.length > 0)
+            return true;
+        if (data.updateList && data.updateList.length > 0)
+            return true;
+        if (data.deleteList && data.deleteList.length > 0)
+            return true;
+        return handler && handler(data);
     }
 
     /**
@@ -362,11 +391,11 @@ export class EditTableDirective {
      * 处理数据
      */
     private processData(data) {
-        if (data.creationList && data.creationList.length > 0)
+        if (data.creationList)
             data.creationList = util.helper.toJson(data.creationList);
-        if (data.updateList && data.updateList.length > 0)
+        if (data.updateList)
             data.updateList = util.helper.toJson(data.updateList);
-        if (data.deleteList && data.deleteList.length > 0)
+        if (data.deleteList)
             data.deleteList = util.helper.toJson(data.deleteList);
     }
 }
